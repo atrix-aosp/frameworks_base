@@ -62,6 +62,12 @@
 
 #include <OMX.h>
 
+#ifdef USE_BOARD_MEDIAPLUGIN
+#define NO_OPENCORE 1
+#include <hardware_legacy/MediaPlayerHardwareInterface.h>
+#endif
+
+
 /* desktop Linux needs a little help with gettid() */
 #if defined(HAVE_GETTID) && !defined(HAVE_ANDROID_OS)
 #define __KERNEL__
@@ -675,6 +681,9 @@ void MediaPlayerService::Client::disconnect()
 }
 
 static player_type getDefaultPlayerType() {
+#ifdef USE_BOARD_MEDIAPLUGIN
+    return BOARD_HW_PLAYER;
+#endif
     return STAGEFRIGHT_PLAYER;
 }
 
@@ -773,6 +782,12 @@ static sp<MediaPlayerBase> createPlayer(player_type playerType, void* cookie,
             LOGV("Create Test Player stub");
             p = new TestPlayerStub();
             break;
+#ifdef USE_BOARD_MEDIAPLUGIN
+        case BOARD_HW_PLAYER:
+            LOGE(" create BoardHWPlayer");
+            p = createMediaPlayerHardware();
+            break;
+#endif
     }
     if (p != NULL) {
         if (p->initCheck() == NO_ERROR) {
