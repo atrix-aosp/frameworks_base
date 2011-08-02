@@ -18,6 +18,10 @@ LOCAL_SHARED_LIBRARIES := \
 
 LOCAL_MODULE:= libcamera_client
 
+ifeq ($(TARGET_USE_MOTO_CUSTOM_CAMERA_PARAMETERS),true)
+    LOCAL_CFLAGS += -DMOTO_CUSTOM_PARAMETERS
+endif
+
 ifeq ($(TARGET_SIMULATOR),true)
     LOCAL_LDLIBS += -lpthread
 endif
