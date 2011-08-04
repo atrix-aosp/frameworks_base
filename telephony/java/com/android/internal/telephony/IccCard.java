@@ -25,6 +25,7 @@ import android.os.Message;
 import android.os.Registrant;
 import android.os.RegistrantList;
 import android.util.Log;
+import android.os.SystemProperties;
 
 import com.android.internal.telephony.PhoneBase;
 import com.android.internal.telephony.CommandsInterface.RadioState;
@@ -614,6 +615,13 @@ public abstract class IccCard {
             currentRadioState == RadioState.SIM_READY             ||
             currentRadioState == RadioState.RUIM_LOCKED_OR_ABSENT ||
             currentRadioState == RadioState.RUIM_READY) {
+
+            String sRILClassname = SystemProperties.get("ro.telephony.ril_class");
+            if("tmp_atrix_ugly_hack".equals(sRILClassname))
+            {
+		Log.i(mLogTag, "**Temp Atrix SIM hack: faking IccCard.State.READY");
+		return IccCard.State.READY;
+            }
 
             int index;
 
