@@ -208,6 +208,7 @@ public final class RIL extends BaseCommands implements CommandsInterface {
     private static final boolean DBG = false;
     static final boolean RILJ_LOGD = Config.LOGD;
     static final boolean RILJ_LOGV = DBG ? Config.LOGD : Config.LOGV;
+    private boolean rilHasExtraField = false;
 
     /**
      * Wake lock timeout should be longer than the longest timeout in
@@ -615,6 +616,7 @@ public final class RIL extends BaseCommands implements CommandsInterface {
         super(context);
         mCdmaSubscription  = cdmaSubscription;
         mNetworkMode = networkMode;
+        rilHasExtraField = context.getResources().getBoolean(com.android.internal.R.bool.config_rilHasExtraField);
         //At startup mPhoneType is first set from networkMode
         switch(networkMode) {
             case RILConstants.NETWORK_MODE_WCDMA_PREF:
@@ -2858,6 +2860,16 @@ public final class RIL extends BaseCommands implements CommandsInterface {
         status.setUniversalPinState(p.readInt());
         status.setGsmUmtsSubscriptionAppIndex(p.readInt());
         status.setCdmaSubscriptionAppIndex(p.readInt());
+
+        /**
+         *  Motorola Atrix RIL has an extra field in here
+         *  If not discarded, the application count will be
+         *  incorrect and break things
+         */
+        if (rilHasExtraField) {
+            p.readInt();
+        }
+
         int numApplications = p.readInt();
 
         // limit to maximum allowed applications
