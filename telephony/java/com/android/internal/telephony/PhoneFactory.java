@@ -114,6 +114,9 @@ public class PhoneFactory {
                 if(sRILClassname == "samsung")
                 {
                     sCommandsInterface = new SamsungRIL(context, networkMode, cdmaSubscription);
+                } else if ("mototegra".equals(sRILClassname)) {
+                    Log.i(LOG_TAG, "Using Motorola Tegra2 RIL");
+                    sCommandsInterface = new MotoTegraRIL(context, networkMode, cdmaSubscription);
                 } else {
                     sCommandsInterface = new RIL(context, networkMode, cdmaSubscription);
                 }
